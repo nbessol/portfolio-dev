@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nicolas Bessol — Développeur full stack</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #ffffff;
+    --title: #212121;
+    --text: #13223a;
+    --muted: #8a93a3;
+    --tile-bg: #ffffff;
+    --tile-border: #f4f4f4;
+    --star: #f5daf6;
+    --grid: #f3f3f3;
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f1115;
+    --title: #f2f2f2;
+    --text: #dfe4ec;
+    --muted: #6d7686;
+    --tile-bg: #16191f;
+    --tile-border: #23272f;
+    --star: #5b3a5d;
+    --grid: #171a20;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-font-smoothing: antialiased; }
+  body {
+    background-color: var(--bg);
+    position: relative;
+    display: flow-root;
+    min-height: 100vh;
+    color: var(--text);
+    font-family: "Inter", -apple-system, "Helvetica Neue", Arial, sans-serif;
+    transition: background .3s, color .3s;
+  }
+  /* Lignes verticales en pointillé, espacées de 200px, centrées sur la page */
+  body::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image: linear-gradient(to bottom, var(--grid) 4px, transparent 4px);
+    background-size: 100% 8px;
+    -webkit-mask-image: linear-gradient(to right, #000 1px, transparent 1px);
+    mask-image: linear-gradient(to right, #000 1px, transparent 1px);
+    -webkit-mask-size: 200px 100%;
+    mask-size: 200px 100%;
+    -webkit-mask-position: 50% 0;
+    mask-position: 50% 0;
+  }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+
+  /* ---------- Header ---------- */
+  header {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    padding: 32px 41px;
+    font-size: 16px;
+    letter-spacing: -0.3px;
+    color: var(--text);
+  }
+  header .right { justify-self: end; }
+  .controls { display: flex; gap: 33px; }
+  #theme { display: inline-flex; align-items: center; gap: 8px; }
+  #theme svg { width: 16px; height: 16px; flex: none; }
+  #theme .moon { display: none; }
+  :root[data-theme="dark"] #theme .sun { display: none; }
+  :root[data-theme="dark"] #theme .moon { display: block; }
+  header a:hover, header button:hover { opacity: .6; }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    position: relative;
+    width: 857px;
+    max-width: calc(100% - 32px);
+    margin: 207px auto 0;
+  }
+  /* Photo de profil dans le coin supérieur droit de « Nico » */
+  .nico { position: relative; }
+  .photos {
+    position: absolute;
+    left: 100%; bottom: 100%;
+    width: 0; height: 0;
+    z-index: -1;
+  }
+  .photos img {
+    position: absolute;
+    left: 0; bottom: 0;
+    width: 124px; height: 124px;
+    object-fit: cover;
+    filter: grayscale(1);
+    transform: rotate(-4deg);
+  }
+  .star {
+    position: absolute;
+    left: 474px; top: 49px;
+    width: 96px; height: 96px;
+    z-index: 1;
+  }
+  .star path { fill: var(--star); }
+  .hero h1 {
+    position: relative;
+    z-index: 2;
+    font-size: 56px;
+    font-weight: 400;
+    line-height: 67px;
+    letter-spacing: -1.08px;
+    text-align: center;
+    color: var(--title);
+  }
+
+  /* ---------- Content ---------- */
+  main {
+    width: 773px;
+    max-width: calc(100% - 32px);
+    margin: 126px auto 0;
+  }
+  main p {
+    font-size: 32px;
+    line-height: 44px;
+    letter-spacing: -0.62px;
+  }
+  main p + p { margin-top: 44px; }
+  .apps-label {
+    margin-top: 104px;
+    font-size: 16px;
+    line-height: 20px;
+    letter-spacing: -0.3px;
+  }
+  .apps {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 35px 0 72px;
+  }
+  .apps li {
+    list-style: none;
+    width: 90px; height: 90px;
+    margin-right: -1px;
+    border: 1px solid var(--tile-border);
+    background: var(--tile-bg);
+    display: grid;
+    place-items: center;
+    transition: transform .2s;
+  }
+  .apps li:hover { transform: translateY(-4px); position: relative; z-index: 1; }
+  .apps img { display: block; object-fit: contain; }
+  /* ---------- Texte souligné + images au survol ---------- */
+  body { overflow-x: clip; }
+  .hover-link {
+    white-space: nowrap;
+    position: relative;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 6px;
+    text-decoration-thickness: 1px;
+    outline: none;
+  }
+  .hover-imgs {
+    position: absolute;
+    left: 100%;
+    bottom: 100%;
+    width: 0; height: 0;
+    pointer-events: none;
+    z-index: 10;
+  }
+  .hover-imgs img {
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 280px;
+    height: auto;
+    object-fit: cover;
+    display: none;
+  }
+  .hover-imgs.wide img { width: 560px; }
+  .hover-imgs.kimok img { width: 380px; }
+  .hover-imgs.concert img { width: 380px; }
+  .hover-link:hover .hover-imgs img.active,
+  .hover-link:focus .hover-imgs img.active { display: block; }
+
+  .contact { margin: 44px 0 44px; }
+  .goodbye { margin-bottom: 160px; }
+  .contact + .goodbye { margin-top: 12px; }
+  .goodbye .hover-imgs img { width: 180px; }
+  .contact a { text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 1px; }
+  .contact a:hover { opacity: .6; }
+  .mail-link { position: relative; white-space: nowrap; }
+  .contact a.mail-link:hover { opacity: 1; }
+  .mail-tip {
+    position: absolute;
+    left: 100%; bottom: 100%;
+    display: none;
+    padding: 10px 16px;
+    background: var(--text);
+    color: var(--bg);
+    font-size: 18px;
+    line-height: 24px;
+    letter-spacing: -0.2px;
+    white-space: nowrap;
+  }
+  .mail-link:hover .mail-tip, .mail-link:focus .mail-tip { display: block; }
+  /* En haut à droite de la page : l'étiquette s'affiche sous le bouton, alignée à droite */
+  header a.header-mail:hover { opacity: 1; }
+  .header-mail .mail-tip { left: auto; right: 0; bottom: auto; top: calc(100% + 8px); font-size: 15px; line-height: 20px; padding: 8px 14px; }
+
+  /* ---------- Mobile ---------- */
+  @media (max-width: 900px) {
+    header { padding: 24px 16px; grid-template-columns: 1fr auto 1fr; column-gap: 12px; }
+    .controls { display: contents; }
+    #theme { display: none; }
+    #lang { grid-column: 2; grid-row: 1; justify-self: center; }
+    .hero { margin-top: 170px; }
+    /* Sur téléphone, « Nico » tombe en 2e ligne : la photo se place au-dessus du titre */
+    .nico { position: static; }
+    .photos { left: 50%; bottom: calc(100% + 12px); }
+    .photos img { transform: translateX(-50%) rotate(-4deg); }
+    .photos img { width: 80px; height: 80px; }
+    .star { left: 52%; top: 20px; width: 70px; height: 70px; }
+    .hero h1 { font-size: 40px; line-height: 48px; letter-spacing: -0.7px; }
+    main { margin-top: 80px; }
+    main p { font-size: 22px; line-height: 31px; letter-spacing: -0.3px; }
+    main p + p { margin-top: 28px; }
+    .apps-label { margin-top: 64px; }
+    .apps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .apps li { width: 100%; height: auto; aspect-ratio: 1; margin: 0; }
+    .apps img { max-width: 62%; max-height: 62%; }
+    .contact { margin-bottom: 40px; }
+    .goodbye { margin-bottom: 100px; }
+    .mail-tip { left: auto; right: 0; font-size: 15px; }
+    /* Sur mobile, désactiver les surlignements illustrés du texte. Le mail garde son infobulle. */
+    .hover-link { text-decoration: none; cursor: auto; }
+    .hover-imgs { display: none !important; }
+  }
+  @media (max-width: 480px) {
+    header { padding: 20px 16px; font-size: 14px; }
+    .controls { gap: 16px; }
+    .hero { margin-top: 140px; }
+    .hero h1 { font-size: clamp(32px, 9vw, 40px); line-height: 1.2; letter-spacing: -0.6px; }
+    .star { left: 54%; top: 12px; width: 58px; height: 58px; }
+    main { margin-top: 64px; }
+    main p { font-size: 20px; line-height: 1.45; letter-spacing: -0.25px; }
+    main p + p { margin-top: 24px; }
+    .apps-label { margin-top: 52px; }
+    .apps { margin-top: 24px; }
+    .contact { margin-top: 36px; margin-bottom: 30px; }
+    .goodbye { margin-bottom: 72px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <span data-i18n="name">Nicolas Bessol</span>
+  <div class="controls">
+    <button id="theme" type="button">
+      <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.2M12 19.8V22M2 12h2.2M19.8 12H22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg>
+      <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"/></svg>
+      <span id="theme-label">Clair</span>
+    </button>
+    <button id="lang" type="button">English</button>
+  </div>
+  <a class="right mail-link header-mail" href="mailto:nicolasbessol@gmail.com"><span data-i18n="contactBtn">Me contacter</span><span class="mail-tip" aria-hidden="true">nicolasbessol@gmail.com</span></a>
+</header>
+
+<section class="hero">
+  <svg class="star" viewBox="0 0 96 96" aria-hidden="true">
+    <path d="M48 0 L54.2 41.8 L96 48 L54.2 54.2 L48 96 L41.8 54.2 L0 48 L41.8 41.8 Z"/>
+  </svg>
+  <h1><span data-i18n="heroA">Hello moi c’est</span> <span class="nico">Nico<span class="photos" aria-hidden="true"><img src="images/nico.jpg" alt=""></span></span><span data-i18n="heroB">, développeur full stack depuis 6&nbsp;ans avec une appétence pour le front-end.</span></h1>
+</section>
+
+<main>
+  <p data-i18n="p1">Je travaille actuellement chez Zest au sein d’une équipe de 12 développeurs. Je travaille actuellement chez Zest, au sein d’une équipe de 12 développeurs. Je contribue à l’évolution du SaaS et au développement de nouvelles fonctionnalités, en collaboration avec l’équipe, en binôme ou en autonomie..</p>
+  <p data-i18n="p2">Au quotidien, je travaille surtout avec React, React Native et Node.js, le tout en TypeScript.</p>
+  <p data-i18n="p2b">Côté front-end, j’ai de l’expérience avec Redux, les reducers et Context API pour la gestion d’état.  Côté back-end, je travaille sur une architecture en microservices, avec une organisation classique basée sur des controllers, models, routes et validators.</p>
+
+  <div class="apps-label" data-i18n="apps">Mes applications de travail</div>
+  <ul class="apps">
+    <li title="VS Code"><img src="images/vscode.png" alt="VS Code" width="41" height="41"></li>
+    <li title="iTerm"><img src="images/terminal.png" alt="iTerm" width="62" height="62"></li>
+    <li title="Docker"><img src="images/docker.png" alt="Docker" width="62" height="62"></li>
+    <li title="Claude"><img src="images/claude.png" alt="Claude" width="50" height="50"></li>
+    <li title="GitHub"><img src="images/github.png" alt="GitHub" width="50" height="50"></li>
+    <li title="Figma"><img src="images/figma.png" alt="Figma" width="29" height="44"></li>
+    <li title="Notion"><img src="images/notion.png" alt="Notion" width="50" height="50"></li>
+    <li title="Slack"><img src="images/slack.png" alt="Slack" width="50" height="50"></li>
+  </ul>
+
+  <p><span data-i18n="p4a"></span> <a class="hover-link" href="https://kimok.fr"><span data-i18n="p4kimok"></span><span class="hover-imgs kimok" aria-hidden="true"><img src="images/kimok_01.jpg" alt=""></span></a><span data-i18n="p4b"></span></p>
+  <p><span data-i18n="p3"></span></p>
+  <p><span data-i18n="p5a"></span> <span class="hover-link" tabindex="0"><span data-i18n="p5surf"></span><span class="hover-imgs" aria-hidden="true"><img src="images/surf.jpg" alt=""></span></span><span data-i18n="p5b"></span> <span class="hover-link" tabindex="0"><span data-i18n="p5movies"></span><span class="hover-imgs wide" aria-hidden="true"><img src="images/movie_01.jpg" alt=""><img src="images/movie_02.jpg" alt=""><img src="images/movie_03.jpg" alt=""></span></span><span data-i18n="p5c"></span> <span class="hover-link" tabindex="0"><span data-i18n="p5concert"></span><span class="hover-imgs concert" aria-hidden="true"><img src="images/concert_01.jpg" alt=""></span></span><span data-i18n="p5c2"></span> <span class="hover-link" tabindex="0"><span data-i18n="p5photo"></span><span class="hover-imgs" aria-hidden="true"><img src="images/photography_01.jpg" alt=""><img src="images/photography_02.jpg" alt=""><img src="images/photography_03.jpg" alt=""></span></span><span data-i18n="p5d"></span></p>
+
+  <p class="contact" id="contact"><span data-i18n="contactA"></span> <a class="mail-link" href="mailto:nicolasbessol@gmail.com"><span data-i18n="contactMail"></span><span class="mail-tip" aria-hidden="true">nicolasbessol@gmail.com</span></a><span data-i18n="contactB"></span> <a href="https://www.linkedin.com/in/nbessol/" target="_blank" rel="noopener">LinkedIn</a>.<br><br><span data-i18n="cvA"></span> <a data-i18n="cvLink" href="cv_nicolasbessol.pdf" target="_blank" rel="noopener">ce lien</a>.</p>
+
+  <p class="goodbye"><span class="hover-link" tabindex="0"><span data-i18n="goodbye">À bientôt !</span><span class="hover-imgs" aria-hidden="true"><img src="images/hamster.jpg" alt=""></span></span></p>
+</main>
+
+<script>
+  const t = {
+    fr: {
+      contactBtn: "Me contacter",
+      contactCopy: "Copier l’email",
+      heroA: "Hello moi c’est",
+      heroB: ", développeur full stack depuis 6 ans avec une appétence pour le front-end.",
+      p1: "Je travaille actuellement chez Zest, au sein d’une équipe de 12 développeurs. Je participe à l’évolution du SaaS et au développement de nouvelles fonctionnalités, que ce soit en équipe, en binôme ou en autonomie.",
+      p2: "Au quotidien, je travaille surtout avec React, Node.js et React Native, le tout en TypeScript.",
+      p2b: "Côté front-end, j’ai de l’expérience avec Redux, les reducers et Context API pour la gestion d’état. Côté back-end, j’ai travaillé sur une architecture en microservices, avec une organisation classique basée sur des controllers, models, routes et validators.",
+      apps: "Mes applications de travail",
+      p3: "Mon expérience de 8 ans en tant qu’UX/UI Designer me permet de conserver une vision produit et de collaborer efficacement avec les équipes design.",
+      p4a: "En parallèle, j’ai conçu et développé",
+      p4kimok: "Kimok",
+      p4b: ", une application qui aide les couples, les familles et les colocataires à mieux répartir les tâches ménagères. Elle est disponible sur l’App Store et Google Play.",
+      p5a: "En dehors du code, j’aime",
+      p5surf: "surfer",
+      p5b: ", escalader, découvrir",
+      p5movies: "des films des années 90",
+      p5c: ", aller à",
+      p5concert: "des concerts",
+      p5c2: ", faire de",
+      p5photo: "la photo argentique",
+      p5d: " et de la musique.",
+      contactA: "Vous pouvez me contacter par",
+      contactMail: "mail",
+      contactB: " ou sur",
+      cvA: "Mon CV peut être téléchargé",
+      cvLink: "ici",
+      goodbye: "À bientôt !",
+      light: "Clair", dark: "Sombre", other: "English"
+    },
+    en: {
+      contactBtn: "Contact me",
+      contactCopy: "Copy email",
+      heroA: "Hi, I’m",
+      heroB: ", a full stack developer for 6 years with a soft spot for front-end.",
+      p1: "I currently work at Zest, a SaaS company, as part of a team of developers. I help evolve the existing codebase and build new features, sometimes with the team, sometimes on my own.",
+      p2: "Day to day, I mostly work with React, Node.js and React Native, all written in TypeScript.",
+      p2b: "On the front end, I have experience with Redux, reducers and the Context API for state management. On the back end, I work with a microservices architecture and a conventional structure based on controllers, models, routes and validators.",
+      apps: "My work tools",
+      p3: "My 8 years of experience as a UX/UI Designer help me maintain a product perspective and collaborate effectively with design teams.",
+      p4a: "On the side, I designed and built",
+      p4kimok: "Kimok",
+      p4b: ", an app that helps couples, families and roommates share household chores more fairly. It’s available on the App Store and Google Play.",
+      p5a: "Outside of code, I love",
+      p5surf: "surfing",
+      p5b: ", climbing, discovering",
+      p5movies: "90s movies",
+      p5c: ", going to",
+      p5concert: "gigs",
+      p5c2: ",",
+      p5photo: "film photography",
+      p5d: " and making music.",
+      contactA: "You can reach me by",
+      contactMail: "email",
+      contactB: " or on",
+      cvA: "My CV is can be downloaded",
+      cvLink: "here",
+      goodbye: "Cheers!",
+      light: "Light", dark: "Dark", other: "Français"
+    }
+  };
+
+  let lang = "fr", theme = "light";
+  try { lang = localStorage.getItem("lang") || lang; theme = localStorage.getItem("theme") || theme; } catch (e) {}
+
+  const themeBtn = document.getElementById("theme");
+  const themeLabel = document.getElementById("theme-label");
+  const langBtn = document.getElementById("lang");
+
+  function applyLang(l) {
+    lang = l;
+    document.documentElement.lang = l;
+    document.querySelectorAll("[data-i18n]").forEach(el => {
+      const v = t[l][el.dataset.i18n];
+      if (v) el.textContent = v;
+    });
+    langBtn.textContent = t[l].other;
+    themeLabel.textContent = theme === "light" ? t[l].light : t[l].dark;
+    try { localStorage.setItem("lang", l); } catch (e) {}
+  }
+  function applyTheme(th) {
+    theme = th;
+    document.documentElement.dataset.theme = th;
+    themeLabel.textContent = th === "light" ? t[lang].light : t[lang].dark;
+    try { localStorage.setItem("theme", th); } catch (e) {}
+  }
+
+  themeBtn.addEventListener("click", () => applyTheme(theme === "light" ? "dark" : "light"));
+  langBtn.addEventListener("click", () => applyLang(lang === "fr" ? "en" : "fr"));
+
+  const headerMail = document.querySelector(".header-mail");
+  const headerMailLabel = headerMail.querySelector('[data-i18n="contactBtn"]');
+  headerMail.addEventListener("mouseenter", () => { headerMailLabel.textContent = t[lang].contactCopy; });
+  headerMail.addEventListener("mouseleave", () => { headerMailLabel.textContent = t[lang].contactBtn; });
+  headerMail.addEventListener("focus", () => { headerMailLabel.textContent = t[lang].contactCopy; });
+  headerMail.addEventListener("blur", () => { headerMailLabel.textContent = t[lang].contactBtn; });
+  headerMail.addEventListener("click", async event => {
+    event.preventDefault();
+    try {
+      await navigator.clipboard.writeText("nicolasbessol@gmail.com");
+      headerMailLabel.textContent = lang === "fr" ? "Email copié !" : "Email copied!";
+    } catch (error) {
+      headerMailLabel.textContent = t[lang].contactCopy;
+    }
+  });
+  const inlineMail = document.querySelector(".contact .mail-link");
+  inlineMail.addEventListener("click", async event => {
+    event.preventDefault();
+    try {
+      await navigator.clipboard.writeText("nicolasbessol@gmail.com");
+    } catch (error) {
+      // L’adresse reste visible dans l’infobulle si l’accès au presse-papiers est refusé.
+    }
+  });
+
+  applyTheme(theme);
+  applyLang(lang);
+
+  // Textes soulignés : les images s'empilent (décalage de 20px vers la droite et vers le haut)
+  // au fur et à mesure que la souris avance sur le texte
+  document.querySelectorAll(".hover-link").forEach(link => {
+    const imgs = link.querySelectorAll(".hover-imgs img");
+    let index = -1;
+    const show = i => { index = i; imgs.forEach((img, k) => {
+      img.classList.toggle("active", k <= i);
+      img.style.transform = `translate(${k * 20}px, ${-k * 20}px)`;
+    }); };
+    link.addEventListener("mousemove", e => {
+      const r = link.getBoundingClientRect();
+      const x = Math.min(Math.max(e.clientX - r.left, 0), r.width - 1);
+      const i = Math.floor(x / r.width * imgs.length);
+      if (i !== index) show(i);
+    });
+    // Sur mobile : chaque toucher affiche l'image suivante
+    link.addEventListener("touchstart", () => show((index + 1) % imgs.length), { passive: true });
+    show(0);
+  });
+</script>
+</body>
+</html>
